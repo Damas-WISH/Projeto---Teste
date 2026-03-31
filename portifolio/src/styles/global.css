@@ -1,0 +1,364 @@
+:root {
+  --bg: #0a0a0a;
+  --bg-soft: #111111;
+  --panel: #151515;
+  --panel-2: rgba(255, 255, 255, 0.04);
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #f5f1e8;
+  --muted: #b4ada1;
+  --accent: #d61f26;
+  --accent-soft: #ff4c52;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  --shell: 1240px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', Arial, sans-serif;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+.shell {
+  width: min(calc(100% - 40px), var(--shell));
+  margin: 0 auto;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.18));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-wrap {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.brand span {
+  color: var(--accent-soft);
+}
+
+.desktop-nav {
+  display: flex;
+  gap: 28px;
+}
+
+.desktop-nav a,
+.nav-cta {
+  font-size: 0.95rem;
+}
+
+.desktop-nav a {
+  color: var(--muted);
+}
+
+.desktop-nav a:hover,
+.nav-cta:hover {
+  color: var(--text);
+}
+
+.nav-cta {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  padding-bottom: 4px;
+}
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  align-items: end;
+}
+
+.hero-media,
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.56) 62%, rgba(0, 0, 0, 0.88) 100%),
+    radial-gradient(circle at 65% 20%, rgba(214, 31, 38, 0.14), transparent 22%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 76px;
+}
+
+.eyebrow,
+.section-overline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.78rem;
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  max-width: 10ch;
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+
+.hero p {
+  max-width: 54ch;
+  margin: 24px 0 0;
+  color: #ddd5c9;
+  font-size: 1.08rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.25s ease;
+}
+
+.btn-solid {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-solid:hover {
+  background: #eb2b33;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.section {
+  padding: 108px 0;
+}
+
+.section-heading {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 42px;
+}
+
+.section-heading h2,
+.contact-band h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  max-width: 12ch;
+}
+
+.section-heading p,
+.manifesto-panel p,
+.service-box p,
+.project-body p {
+  color: var(--muted);
+}
+
+.manifesto {
+  background: linear-gradient(to bottom, #0a0a0a, #0d0d0d);
+}
+
+.manifesto-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.manifesto-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--line);
+  padding: 32px;
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+}
+
+.manifesto-panel ul {
+  margin: 24px 0 0;
+  padding-left: 18px;
+  color: #dfd6c8;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.project-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.project-image {
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+}
+
+.project-image img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.project-card:hover img {
+  transform: scale(1.04);
+}
+
+.project-body {
+  padding: 24px;
+}
+
+.project-body span,
+.service-box span {
+  display: inline-block;
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+  margin-bottom: 12px;
+}
+
+.project-body h3,
+.service-box h3 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.service-box {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.contact-band {
+  padding: 90px 0 110px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.contact-band-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 26px;
+  align-items: center;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 960px) {
+  .desktop-nav {
+    display: none;
+  }
+
+  .manifesto-grid,
+  .contact-band-grid,
+  .project-grid,
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-actions {
+    justify-content: flex-start;
+  }
+
+  .section {
+    padding: 86px 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-wrap {
+    min-height: 72px;
+  }
+
+  .hero-content {
+    padding-bottom: 52px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
