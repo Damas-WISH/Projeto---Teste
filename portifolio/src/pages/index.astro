@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import ContactBand from '../components/ContactBand.astro';
+---
+
+<BaseLayout
+  title="Nicolas Visuals | Portfólio Premium"
+  description="Portfólio premium de fotografia e direção visual com inspiração automotiva e editorial."
+>
+  <Header />
+  <Hero />
+
+  <main>
+    <section class="section manifesto" id="manifesto">
+      <div class="shell manifesto-grid">
+        <SectionTitle
+          overline="Manifesto"
+          title="Tecnologia e fotografia não competem aqui. Elas se ampliam."
+          text="Minha proposta é unir precisão técnica, direção estética e construção de presença digital. Não penso só em imagem. Penso em percepção, impacto e assinatura visual."
+        />
+
+        <div class="manifesto-panel">
+          <p>
+            A referência não é um portfólio genérico. É uma experiência de marca: imagem grande, ritmo controlado,
+            tipografia forte, contraste elegante e sensação de luxo contemporâneo.
+          </p>
+          <ul>
+            <li>Projetos com atmosfera premium</li>
+            <li>Estética automotiva, urbana e editorial</li>
+            <li>Base pensada para crescer com blog, serviços e agendamento</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section projects" id="projects">
+      <div class="shell">
+        <SectionTitle
+          overline="Projetos"
+          title="Narrativas visuais para máquina, cidade e identidade."
+          text="Troque as imagens de exemplo pelas suas. A estrutura abaixo já foi desenhada para parecer posicionamento, não só vitrine."
+        />
+        <ProjectGrid />
+      </div>
+    </section>
+
+    <section class="section services" id="services">
+      <div class="shell">
+        <SectionTitle
+          overline="Serviços"
+          title="Uma base visual que também funciona como negócio."
+          text="Esse site não foi montado só para ficar bonito. Ele já nasce com lógica de conversão, autoridade e crescimento."
+        />
+
+        <div class="service-grid">
+          <article class="service-box">
+            <span>01</span>
+            <h3>Ensaios automotivos</h3>
+            <p>Imagem premium para carros e motos com linguagem mais cinematográfica e marcante.</p>
+          </article>
+
+          <article class="service-box">
+            <span>02</span>
+            <h3>Arquitetura e elementos</h3>
+            <p>Composição para prédios, linhas, materiais e detalhes com pegada editorial.</p>
+          </article>
+
+          <article class="service-box">
+            <span>03</span>
+            <h3>Marca pessoal e lifestyle</h3>
+            <p>Produção visual para presença digital, roupas, campanhas e posicionamento.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ContactBand />
+</BaseLayout>

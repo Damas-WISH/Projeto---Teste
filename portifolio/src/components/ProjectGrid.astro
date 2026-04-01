@@ -1,0 +1,43 @@
+---
+const projects = [
+  {
+    title: 'Machine Presence',
+    category: 'Automotivo',
+    image: '/images/project-1.jpg',
+    copy: 'Ensaio visual para carro com abordagem noturna, contraste preciso e linguagem premium.'
+  },
+  {
+    title: 'Urban Geometry',
+    category: 'Arquitetura',
+    image: '/images/project-2.jpg',
+    copy: 'Linhas, superfícies, concreto e profundidade para composições com força editorial.'
+  },
+  {
+    title: 'Lifestyle Frame',
+    category: 'Lifestyle',
+    image: '/images/project-3.jpg',
+    copy: 'Presença, estilo e atmosfera para imagem pessoal e posicionamento digital.'
+  },
+  {
+    title: 'Detail & Motion',
+    category: 'Elementos',
+    image: '/images/project-4.jpg',
+    copy: 'Textura, detalhe e recorte para traduzir objeto em desejo visual.'
+  }
+];
+---
+
+<div class="project-grid">
+  {projects.map((project) => (
+    <article class="project-card">
+      <div class="project-image">
+        <img src={project.image} alt={project.title} />
+      </div>
+      <div class="project-body">
+        <span>{project.category}</span>
+        <h3>{project.title}</h3>
+        <p>{project.copy}</p>
+      </div>
+    </article>
+  ))}
+</div>
