@@ -1,6 +1,6 @@
 # Configuração Firebase + Deploy Automático
 
-Este guia explica como configurar o Firebase com ambientes dev e prod, além do deploy automático via GitHub Actions.
+Este guia explica como publicar o projeto no Firebase Hosting e configurar deploy automático via GitHub Actions usando o projeto Firebase atual.
 
 ## 📋 Pré-requisitos
 
@@ -9,23 +9,20 @@ Este guia explica como configurar o Firebase com ambientes dev e prod, além do 
 - Repositório GitHub
 - Firebase CLI instalado globalmente
 
-## 🚀 Passo 1: Criar Projetos no Firebase
+## 🚀 Passo 1: Confirmar o Projeto Firebase
 
-### Criar projeto DEV:
-1. Acesse [Firebase Console](https://console.firebase.google.com)
-2. Clique em "Criar projeto"
-3. Nome: `seu-portfolio-dev`
-4. Siga os passos
-5. Habilite Hosting, Firestore, Authentication, Storage (se necessário)
+Projeto configurado atualmente:
 
-### Criar projeto PROD:
-1. Repita o processo acima
-2. Nome: `seu-portfolio-prod`
+```text
+projeto--teste-21287
+```
+
+Se você quiser continuar usando apenas esse projeto, não precisa criar um segundo ambiente agora.
 
 ## 🔑 Passo 2: Obter Credenciais Firebase
 
-### Para DEV:
-1. No Firebase Console, selecione `seu-portfolio-dev`
+### Para o projeto atual:
+1. No Firebase Console, selecione `projeto--teste-21287`
 2. Clique em ⚙️ > Configurações do projeto
 3. Na aba "Contas de serviço", clique em "SDK do Firebase para JavaScript"
 4. Copie as credenciais (apiKey, authDomain, etc.)
@@ -42,19 +39,14 @@ Este guia explica como configurar o Firebase com ambientes dev e prod, além do 
 }
 ```
 
-### Para PROD:
-Repita o processo para o projeto de produção.
-
 ## 🔐 Passo 3: Configurar Variáveis Localmente
 
-1. Copie `.env.example` para `.env.dev` e `.env.prod`:
+1. Crie `.env.dev` a partir de `.env.example`:
 ```bash
 cp .env.example .env.dev
-cp .env.example .env.prod
 ```
 
-2. Edite `.env.dev` com as credenciais DEV
-3. Edite `.env.prod` com as credenciais PROD
+2. Edite `.env.dev` com as credenciais do projeto atual
 
 ⚠️ **Nunca comite estes arquivos!** (já estão no .gitignore)
 
@@ -62,43 +54,30 @@ cp .env.example .env.prod
 
 1. Vá para seu repositório GitHub
 2. Settings > Secrets and variables > Actions
-3. Adicione os seguintes secrets:
+3. Adicione o seguinte secret:
 
-### DEV Secrets:
+### Secret para deploy do Hosting:
 ```
-DEV_FIREBASE_API_KEY
-DEV_FIREBASE_AUTH_DOMAIN
-DEV_FIREBASE_PROJECT_ID
-DEV_FIREBASE_STORAGE_BUCKET
-DEV_FIREBASE_MESSAGING_SENDER_ID
-DEV_FIREBASE_APP_ID
-DEV_FIREBASE_MEASUREMENT_ID
+FIREBASE_SERVICE_ACCOUNT
 ```
 
-### PROD Secrets:
-```
-PROD_FIREBASE_API_KEY
-PROD_FIREBASE_AUTH_DOMAIN
-PROD_FIREBASE_PROJECT_ID
-PROD_FIREBASE_STORAGE_BUCKET
-PROD_FIREBASE_MESSAGING_SENDER_ID
-PROD_FIREBASE_APP_ID
-PROD_FIREBASE_MEASUREMENT_ID
-```
+Esse secret deve guardar o JSON completo da service account com permissão de deploy no Firebase Hosting.
 
-### Firebase Token:
-1. Execute localmente:
+### Como gerar as service accounts
+O caminho oficial do Firebase para isso e para os workflows do GitHub é:
 ```bash
-firebase login:ci
+firebase init hosting:github
 ```
-2. Copie o token gerado
-3. Adicione como secret `FIREBASE_TOKEN` no GitHub
+
+Se preferir manter os workflows já criados no repositório, crie as credenciais manualmente:
+1. Firebase Console > Projeto > Configurações > Contas de serviço
+2. Gere uma chave privada JSON para o projeto atual
+3. Salve o conteúdo JSON no secret `FIREBASE_SERVICE_ACCOUNT`
 
 ## 🌳 Passo 5: Configurar Branches
 
-Você deve ter ou criar:
-- `main` → Deploy em PROD
-- `develop` → Deploy em DEV
+Você só precisa da branch:
+- `main` → Deploy live automático
 
 ## 📦 Passo 6: Instalar Dependências
 
@@ -124,36 +103,56 @@ firebase init
 npm run dev
 ```
 
-Uses .env.dev automaticamente (configure em astro.config ou em suas variáveis).
+Usa `.env.dev` automaticamente via `--mode dev`.
 
 ### Build Local:
 ```bash
 npm run build
 ```
 
-### Deploy Manual:
+Se quiser manter só um ambiente, use `npm run build:dev` como referência do que vai para o ar.
 
-**Dev:**
+### Publicar no Firebase Hosting:
+1. Faça login no Firebase CLI:
 ```bash
-npm run deploy:dev
+firebase login
 ```
 
-**Prod:**
+2. Crie `.firebaserc` com base em `.firebaserc.example` e coloque os IDs reais dos seus projetos.
+
+3. Vincule o projeto local:
 ```bash
-npm run deploy:prod
+firebase use live
+```
+
+4. Faça o deploy:
+```bash
+npm run deploy
+```
+
+### Deploy Manual:
+
+**Live:**
+```bash
+npm run deploy
 ```
 
 ## ⚙️ Deploy Automático
 
+Os workflows já preparados neste repositório fazem o seguinte:
+- Pull Request: cria preview temporário no Firebase Hosting
+- Push em `main`: publica no Hosting live
+- `workflow_dispatch`: permite rodar manualmente pelo GitHub Actions
+
 ### Quando você faz push:
 
-1. **Push para `develop`** → Deploy automático em DEV
-2. **Push para `main`** → Deploy automático em PROD
+1. **Push para `main`** → Deploy automático no site live
+2. **Pull Request** → Preview automático para validação
 
 O GitHub Actions:
 1. ✅ Instala dependências
-2. ✅ Carrega as variáveis de ambiente corretas
-3. ✅ Faz o build do projeto
+2. ✅ Faz o build do projeto
+3. ✅ Publica no Firebase Hosting
 4. ✅ Faz deploy no Firebase
 
 ## 📊 Verificar Deploy
@@ -164,11 +163,9 @@ Após o push, verifique:
 
 ## 🆘 Troubleshooting
 
-### "Firebase Token não encontrado"
-```bash
-firebase login:ci
-# Copie o token e adicione como FIREBASE_TOKEN secret
-```
+### "Secret FIREBASE_SERVICE_ACCOUNT não encontrado"
+- Confirme que o secret `FIREBASE_SERVICE_ACCOUNT` existe no GitHub
+- Verifique se o valor salvo é o JSON completo da service account
 
 ### "Projeto não encontrado"
 - Verifique se o Project ID está correto nos secrets
@@ -187,12 +184,10 @@ npm run build
 
 ## 📋 Checklist Final
 
-- [ ] Conta Firebase criada e dois projetos configurados
-- [ ] Credenciais adicionadas em `.env.dev` e `.env.prod`
-- [ ] Todos os secrets adicionados no GitHub
-- [ ] Firebase Token configurado
-- [ ] Branch `develop` criado
-- [ ] Repository > Settings > deployment branches configurado
+- [ ] Projeto Firebase configurado
+- [ ] Credenciais adicionadas em `.env.dev`
+- [ ] Secret `FIREBASE_SERVICE_ACCOUNT` adicionado no GitHub
+- [ ] Branch `main` publicada no GitHub
 - [ ] Primeiro push para testar o workflow
 
 ## 🎓 Info Adicional

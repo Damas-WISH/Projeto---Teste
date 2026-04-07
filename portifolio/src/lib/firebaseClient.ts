@@ -1,7 +1,30 @@
-import { auth, db, storage } from '@/lib/firebase';
+import type { DocumentData, Timestamp, WithFieldValue } from 'firebase/firestore';
+import { auth, db, storage } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+type FirestoreDocument<T extends DocumentData> = T & { id: string };
+
+export interface PortfolioProjectInput {
+  title: string;
+  description: string;
+  link: string;
+  image?: string;
+}
+
+export interface PortfolioProjectRecord extends PortfolioProjectInput {
+  createdAt: Date | Timestamp;
+}
+
+export interface PortfolioProject extends PortfolioProjectRecord {
+  id: string;
+}
+
+function rethrowFirebaseError(action: string, error: unknown): never {
+  console.error(`Erro ao ${action}:`, error);
+  throw error;
+}
 
 // ==================== AUTENTICAÇÃO ====================
 
@@ -13,8 +36,7 @@ export async function registerUser(email: string, password: string) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
-    console.error('Erro ao registrar:', error);
-    throw error;
+    rethrowFirebaseError('registrar', error);
   }
 }
 
@@ -26,8 +48,7 @@ export async function loginUser(email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
-    console.error('Erro ao fazer login:', error);
-    throw error;
+    rethrowFirebaseError('fazer login', error);
   }
 }
 
@@ -38,8 +59,7 @@ export async function logoutUser() {
   try {
     await signOut(auth);
   } catch (error) {
-    console.error('Erro ao fazer logout:', error);
-    throw error;
+    rethrowFirebaseError('fazer logout', error);
   }
 }
 
@@ -48,33 +68,33 @@ export async function logoutUser() {
 /**
  * Adicionar documento a uma coleção
  */
-export async function addDocument(collectionName: string, data: any) {
+export async function addDocument<T extends DocumentData>(collectionName: string, data: WithFieldValue<T>) {
   try {
     const docRef = await addDoc(collection(db, collectionName), data);
     return docRef.id;
   } catch (error) {
-    console.error('Erro ao adicionar documento:', error);
-    throw error;
+    rethrowFirebaseError('adicionar documento', error);
   }
 }
 
 /**
  * Obter todos os documentos de uma coleção
  */
-export async function getDocuments(collectionName: string) {
+export async function getDocuments<T extends DocumentData>(
+  collectionName: string
+): Promise<FirestoreDocument<T>[]> {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));
-    const documents: any[] = [];
-    querySnapshot.forEach((doc) => {
+    const documents: FirestoreDocument<T>[] = [];
+    querySnapshot.forEach((docSnapshot) => {
       documents.push({
-        id: doc.id,
-        ...doc.data(),
+        id: docSnapshot.id,
+        ...(docSnapshot.data() as T),
       });
     });
     return documents;
   } catch (error) {
-    console.error('Erro ao obter documentos:', error);
-    throw error;
+    rethrowFirebaseError('obter documentos', error);
   }
 }
 
@@ -85,8 +105,7 @@ export async function deleteDocument(collectionName: string, docId: string) {
   try {
     await deleteDoc(doc(db, collectionName, docId));
   } catch (error) {
-    console.error('Erro ao deletar documento:', error);
-    throw error;
+    rethrowFirebaseError('deletar documento', error);
   }
 }
 
@@ -102,8 +121,7 @@ export async function uploadFile(filePath: string, file: File) {
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
   } catch (error) {
-    console.error('Erro ao fazer upload:', error);
-    throw error;
+    rethrowFirebaseError('fazer upload', error);
   }
 }
 
@@ -115,8 +133,7 @@ export async function getFileURL(filePath: string) {
     const fileRef = ref(storage, filePath);
     return await getDownloadURL(fileRef);
   } catch (error) {
-    console.error('Erro ao obter URL:', error);
-    throw error;
+    rethrowFirebaseError('obter URL', error);
   }
 }
 
@@ -125,13 +142,8 @@ export async function getFileURL(filePath: string) {
 /**
  * Exemplo: Adicionar projeto ao portfólio
  */
-export async function addPortfolioProject(projectData: {
-  title: string;
-  description: string;
-  link: string;
-  image?: string;
-}) {
-  return await addDocument('projects', {
+export async function addPortfolioProject(projectData: PortfolioProjectInput) {
+  return await addDocument<PortfolioProjectRecord>('projects', {
     ...projectData,
     createdAt: new Date(),
   });
@@ -141,5 +153,5 @@ export async function addPortfolioProject(projectData: {
  * Exemplo: Obter todos os projetos
  */
 export async function getPortfolioProjects() {
-  return await getDocuments('projects');
+  return await getDocuments<PortfolioProjectRecord>('projects');
 }
